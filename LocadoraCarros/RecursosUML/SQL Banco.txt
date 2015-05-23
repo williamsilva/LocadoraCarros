@@ -1,0 +1,139 @@
+create table endereco(
+id int not null,
+rua varchar(80) not null,
+bairro varchar(30) not null,
+numero int not null,
+cidade varchar(50) not null,
+estado varchar(30) not null,
+complemento varchar (200),
+constraint endereco_pk PRIMARY KEY (id)
+);
+create table pessoas(
+id int not null,
+id_endereco int not null,
+nome varchar (60) not null,
+cpf int not null,
+email varchar (50),
+telefone int not null,
+observacoes varchar (200),
+sexo varchar(1) not null,
+constraint pessoas_pk PRIMARY KEY (id),
+Constraint pessoas_fk Foreign Key (id_endereco)
+References endereco (id)
+);
+create table cliente(
+id int not null,
+id_pessoas int not null,
+Codigo_Carteira_Motorista int not null,
+constraint cliente_pk PRIMARY KEY (id),
+constraint cliente_fk Foreign key (id_pessoas)
+References pessoas (id)
+);
+create table tipoFuncionario(
+id int not null,
+funcao varchar(60) not null,
+salario float,
+comissao float,
+constraint tipoFuncionario_pk PRIMARY KEY (id)
+);
+create table funcionario(
+id int not  null,
+id_tipoFuncionario int not null,
+cargo_horario_semanal int not null,
+anotacoes_especiais varchar(200),
+data_Admissao date not null,
+numPis int not null,
+dataDemissao date not null,
+numero_carteira_trabalho int not null,
+constraint funcionario_pk PRIMARY KEY (id),
+constraint funcionario_fk FOREIGN KEY (id_tipoFuncionario) references tipoFuncionario (id)
+);
+create table tipoCarro(
+id int not null,
+marca varchar(30),
+descricao varchar(50),
+precoDia float,
+precoSemana float,
+precoMes float,
+constraint tipoCarro_pk Primary key (id)
+);
+create table carro(
+id int not null,
+id_tipoCarro int not null,
+quantidade_estoque int not null,
+placa varchar (20) not null,
+constraint carro_pk Primary key (id),
+constraint carro_fk Foreign key (id_tipoCarro) references tipoCarro (id)
+);
+create table reserva(
+id int not null,
+data_retirada_prevista date not null,
+hora_retirada_prevista time not null,
+data_devolucao_prevista date not null,
+hora_devolucao_prevista time not null,
+id_cliente int not null,
+id_funcionario int not null,
+id_carro int  not null,
+constraint reserva_pk PRIMARY KEY (id),
+constraint reserva_fk Foreign key(id_cliente) references cliente (id),
+constraint reserva1_fk Foreign key (id_funcionario) references funcionario (id),
+constraint reserva2_fk Foreign key (id_carro) references carro (id)
+);
+create table retirada(
+id int not null,
+data_retirada date not null,
+hora_retirada time not null,
+id_cliente int not null,
+id_funcionario int not null,
+id_carro int not null,
+quilometragem_carro float,
+constraint retirada_pk PRIMARY KEY (id),
+constraint retirada_fk Foreign key (id_funcionario) references funcionario (id),
+constraint retirada1_fk Foreign key (id_cliente) references cliente (id),
+constraint retirada2_fk Foreign key (id_carro) references carro (id)
+);
+create table devolucao(
+id int not null,
+id_carro int not null,
+id_tipoCarro int not null,
+data_devolucao date not null,
+hora_devolucao time not null,
+quilometragem_carro_devolucao float,
+diariasCobradas int,
+constraint devolucao_pk PRIMARY KEY (id),
+constraint devolucao_fk Foreign key (id_carro) references carro (id),
+constraint devolucao1_fk Foreign key (id_tipoCarro) references tipoCarro (id)
+);
+create table tipoManutencao(
+id int not null,
+nome varchar(60) not null,
+descricao varchar (80) not null,
+pecaTrocada varchar (100) not null,
+gasolinaPreenchida float,
+constraint tipoManutencao_pk PRIMARY KEY (id)
+);
+create table manutencao(
+id int not null,
+id_carro int not null,
+id_funcionario int not null,
+id_tipoManutencao int not null,
+data date not null,
+hora time not null,
+constraint manutencao_pk PRIMARY KEY (id),
+constraint manutencao_fk Foreign key (id_carro) references  carro (id),
+constraint manutencao1_fk Foreign Key (id_funcionario) references funcionario (id),
+constraint manutencao2_fk Foreign Key (id_tipoManutencao) references tipoManutencao (id)
+);
+create table recibo(
+id int not null,
+id_devolucao int not null,
+numeroRecibo int not null,
+data_Vencimento date,
+data_Pagamento date,
+totalPago float,
+juros float,
+desconto float,
+multa float,
+constraint recibo_pk PRIMARY KEY (id),
+constraint recibo_fk Foreign key (id_devolucao) references devolucao (id)
+);
